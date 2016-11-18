@@ -85,3 +85,27 @@ function createMap(tagToSearch,area){
   
       }
 }
+
+var contactsList = [];
+function getContacts(){
+  //ajax call to get a list of contacts
+  $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/me}/connections" method:"GET"}).done(function(response){
+    console.log(response);
+    //loop through the response and save off the name and do the address call
+    for (var i = 0; i<response.connections.length; i++ ){
+      var contactName = response.connections[i].names[0].displayName
+      
+      //save the resource name 
+      var resourceName = response.connections[i].resourceName;
+      //second ajax call to get the address - uses a different request
+      $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/"+resourceName+"}" method:"GET"}).done(function(responseTwo){
+        console.log (responseTwo);
+        var address = responseTwo.addresses[0].formattedValue;
+
+        //push an object of contact Name and contact address to the array contactList
+        contactsList.push({contactName:contactName, contactAddress: address});
+      }
+    }
+
+  })
+}
