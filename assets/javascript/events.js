@@ -7,6 +7,8 @@ $(document).ready(function(){
 	// And the service objects
 	people = new pnpPeople(); // service object for the Google People API
 
+	// And finally this is where the function call to load the DOM with the data will go
+
 })
 
 // handleGapiScriptLoad()

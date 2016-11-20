@@ -7,6 +7,10 @@
     <link rel="stylesheet" type="text/css" href="assets/css/reset.css">
 	<!--Import this app's stylesheet-->
     <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <!--Bootstrap CSS-->
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css">
+    <!--Font Awesome-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -23,4 +27,116 @@
     <script type="text/javascript" src="assets/javascript/main.js"></script>
     
 </body>
+
+<div class="container">
+
+
+<!-- Main Bootstrap Search -->
+<div class="container">
+
+    <!-- Jumbotron for Title -->
+    <div class="jumbotron" style="background-color: lightblue; color: white;">
+        <h1 class="text-center"><strong></i> People and Places Search</strong></h1>
+    </div>
+
+    <!-- Row for Searching -->
+    <div class="row">
+        <div class="col-sm-12">
+        <br>
+            <!-- First panel is for handling the search parameters -->
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong><i class="fa fa-search"></i>Contact Search</strong></h3>
+                </div>
+                <div class="panel-body">
+
+                    <!-- Here we create an HTML Form for handling the inputs-->
+                    <form role="form">
+
+                      <!-- Here we create the text box for capturing the search term-->
+                      <div class="form-group">
+                        <label for="contactSearch">Contact</label>
+                        <input type="text" class="form-control" id="contactName" placeholder="Carlos Herrera">
+                      </div>
+
+                      <!-- Here we create the text box for capturing the adress-->
+                      <div class="form-group">
+                        <label for="search">Address</label>
+                        <input type="text" class="form-control" id="contactAddress" placeholder="125 Main St.">
+
+                      </div>
+
+                      <!-- Here we create the text box for capturing the label-->
+                      <div class="form-group">
+                        <label for="search">Label</label>
+                        <input type="text" class="form-control" id="searchTerm" placeholder="Enjoys Mexican food">
+                      </div>
+
+                    
+                      
+                      <!-- Here we have our final submit button -->
+                      <button type="submit" class="btn btn-default" id="goSearch"><i class="fa fa-search"></i> Submit</button>
+                      
+
+
+                      <button type="button" class="btn btn-default" id="clearAll"><i class="fa fa-trash"></i> Clear</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- This row will handle all of the retrieved articles -->
+    <div class="row">
+        <div class="col-sm-12">
+        <br>
+
+            <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+            <div class="panel panel-primary">
+
+                <!-- Panel Heading for the retrieved articles box -->
+                <div class="panel-heading">
+                    <h3 class="panel-title"><strong><i class="fa fa-map"></i> Map</strong></h3>
+                </div>
+
+                <!-- This main panel will hold the map -->
+                <div class="panel-body" id="map">
+                </div>
+            
+
+
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </html>

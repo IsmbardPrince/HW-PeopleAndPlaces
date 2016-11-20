@@ -83,54 +83,6 @@ function pnpPeople() {
 	    });
 	}
 
-	// userContact(resID, name, email, address, tags)
-	// This is the constructor for the user contact object used internally by the app. Any
-	// of the available properties may be empty except for the resID property.
-	// 		resID - the People API resource ID to uniquely identify the contact to the API
-	//		name - the name of the contact
-	//		email - the email of the contact
-	//		address - address of the contact
-	//		tags - array of tag, value objects for any tags attached to the contact
-	// TODO this constructor needs to be moved to the top app level so it can be used by both
-	// the pnpUser and pnpPeople classes
-	function userContact(resID, name, email, address, tags) {
-
-		// Public properties of the object
-		this.resID = resID; // the People API resource ID to uniquely identify the contact to the API
-		this.name = name; // the name of the contact
-		this.email = email; // the email of the contact
-		this.address = address; // address of the contact
-		this.tags = tags; // array of tag, value objects for any tags attached to the contact
-
-		// Public methods of the object
-
-		// this.addTag(tag, value)
-		// Adds the specified tag and value to the contact represented by this object
-		//		tag - the specific tag to add to this contact
-		//		value - the value to associate with the tag
-		// TODO actually implement this stub
-		this.addTag = function(tag, value) {
-
-		}
-
-		// this.remTag(tag)
-		// Removes the specified tag and its associated value from the contact represented by this object
-		//		tag - the specific tag to remove from this contact
-		// TODO actually implement this stub
-		this.remTag = function(tag) {
-
-		}
-
-		// this.editTag(tag, newValue)
-		// Updates the specified tag to a new value for the contact represented by this object
-		//		tag - the specific tag of this contact to be edited
-		//		newValue - the new value to associate with the tag
-		// TODO actually implement this stub
-		this.editTag = function(tag, newValue) {
-
-		}
-	}
-
 	// getUserData()
 	// After we have established proper authentication credentials with the Google People API,
 	// this function accesses the data for the app user and their contact list, making it publically
@@ -171,11 +123,12 @@ function pnpPeople() {
 			} else {
 				self.userAddress = "";
 			}
+			pushUserData(); // push the user data to the main user object
 		})
 
 		// And their contact list
 		// TODO number of contacts to retrieve is set to 500 which will work for our test case
-		// TODO but need to handle the case where their are more contacts than can be loaded in
+		// TODO but need to handle the case where there are more contacts than can be loaded in
 		// TODO one call
         gapi.client.people.people.connections.list({
            'resourceName': 'people/me',
@@ -202,10 +155,51 @@ function pnpPeople() {
 					if (person.addresses && person.addresses.length > 0) {
 						address = person.addresses[0].formattedValue;
 					}
-					self.userContacts.push(new userContact(resID, name, email, address));
+					self.userContacts.push(new pnpContact(resID, name, email, address));
+
 				}
+         
+				pushContactData(); // push the contact data to the main user object
+
 			}
+
          });
+
+    }
+
+	// pushUserData()
+	// After we have accessed the data for the app user and their contact list, this function
+	// pushes that data to the main user object for the app. A push is used because that is the
+	// quickest way to initialize the main user object. Because this service object is initialized
+	// asynchronously, the object may actually exist but not contain valid data. Thus any accesses
+	// have to wait until the data is ready. A push ensures that the data will be available as soon
+	// as it is ready.
+    function pushUserData() {
+
+		user.name = self.userName; // the full name of the signed-in google account currently accessing the app
+		user.email = self.userEmail; // the email address of the signed-in google account currently accessing the app
+		user.address = self.userAddress; // the street address of the signed-in google account currently accessing the app
+		user.userReady = true; // indicates whether the user object now has data loaded and is ready for use
+		user.ready = (user.userReady && user.contactsReady);
+
+		console.log(user);
+
+    }
+
+	// pushContactData()
+	// After we have accessed the data for the app user and their contact list, this function
+	// pushes that data to the main user object for the app. A push is used because that is the
+	// quickest way to initialize the main user object. Because this service object is initialized
+	// asynchronously, the object may actually exist but not contain valid data. Thus any accesses
+	// have to wait until the data is ready. A push ensures that the data will be available as soon
+	// as it is ready.
+    function pushContactData() {
+
+		user.contacts = self.userContacts; // array of the user's contact objects
+		user.contactsReady = true; // indicates whether the user object now has data loaded and is ready for use
+		user.ready = (user.userReady && user.contactsReady);
+
+		console.log(user);
 
     }
 
@@ -237,6 +231,116 @@ function pnpPeople() {
 
 	// Executed when the constructor is called, i.e. var xxx = new pnpPeople();
 	init(); // initialize and load the data for this object instance
-	console.log(this);
 
 }
+
+//function to create map
+function createMap(tagToSearch,area){
+  function initMap() {
+        //create a geocoder object
+        geocoder = new google.maps.Geocoder();
+        //placeholder latlng until we do the search
+        var latlng = new google.maps.LatLng(53.3496, -6.3263);
+        //set the initial bounds of the map, update when pins are dropped
+        var bounds = new google.maps.LatLngBounds();
+
+        //creating the map object - appending it to the map ID
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: latlng,
+          zoom: 12
+        });
+
+        //convert the string search into an address to search 
+        geocoder.geocode( {address:area}, function(results, status) 
+        {
+          //if successful, 
+          if (status == google.maps.GeocoderStatus.OK) 
+          {
+            //center the map over the result
+            map.setCenter(results[0].geometry.location);
+
+            //place a marker at the center of search area location
+            var marker = new google.maps.Marker(
+            {
+                title:"Starting Location",
+                animation: google.maps.Animation.DROP,
+                map: map,
+                position: results[0].geometry.location,
+            });
+            //icon for the starting point is green dot 
+            marker.setIcon("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
+          } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+         }
+         //displaying search results
+        infowindow = new google.maps.InfoWindow();
+        var service = new google.maps.places.PlacesService(map);
+        //make sure we're searching the right thing
+        console.log(tagToSearch);
+        //the actual search 
+        service.textSearch({
+          //using the location as found above
+          location: results[0].geometry.location,
+          radius: 500,
+          query: tagToSearch
+        }, callback);
+
+        //in the callback we place a marker for each of the results
+      function callback(results, status) {
+        console.log(results);
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+          }
+        }
+      }
+      //this creates markers for each of the search results
+      function createMarker(place) {
+        var placeLoc = place.geometry.location;
+        var marker = new google.maps.Marker({
+          map: map,
+          position: place.geometry.location
+        });
+        //adjust the bounds of the map to fit all of the markers
+        bounds.extend(placeLoc);
+        map.fitBounds(bounds);
+        //when a marker is clicked, show the info window
+        google.maps.event.addListener(marker, 'click', function() {
+          infowindow.setContent("<h3>"+place.name + " - Rating: "+ place.rating + "</h3><p>" + place.formatted_address +"</p>");
+          infowindow.open(map, this);
+        });
+
+        };
+
+        
+      })
+  
+      }
+}
+
+/*
+var contactsList = [];
+function getContacts(){
+  //ajax call to get a list of contacts
+  $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/me}/connections" method:"GET"}).done(function(response){
+    console.log(response);
+    //loop through the response and save off the name and do the address call
+    for (var i = 0; i<response.connections.length; i++ ){
+      var contactName = response.connections[i].names[0].displayName
+      
+      //save the resource name 
+      var resourceName = response.connections[i].resourceName;
+      //second ajax call to get the address - uses a different request
+      $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/"+resourceName+"}" method:"GET"}).done(function(responseTwo){
+        console.log (responseTwo);
+        var address = responseTwo.addresses[0].formattedValue;
+
+        //push an object of contact Name and contact address to the array contactList
+        contactsList.push({contactName:contactName, contactAddress: address});
+      }
+    }
+
+  })
+
+}
+*/
