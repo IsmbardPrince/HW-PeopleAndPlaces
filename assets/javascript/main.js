@@ -86,3 +86,36 @@ function pnpContact(resID, name, email, address, tags) {
 	}
 
 }
+
+function pnpTags() {
+
+    var database;
+
+    this.addContact(contact, owner, tags) {
+
+    }
+
+    this.addTags(contact, owner, tags) {
+    	
+    }
+
+	function init() {
+
+		// Initialize Firebase
+		var config = {
+		apiKey: "AIzaSyCeX4km95QWqdGNVmUyViVokHeGtgKEdJc",
+		authDomain: "my-first-project-bd5a1.firebaseapp.com",
+		databaseURL: "https://my-first-project-bd5a1.firebaseio.com",
+		storageBucket: "my-first-project-bd5a1.appspot.com",
+		messagingSenderId: "81635511272"
+		};
+		firebase.initializeApp(config);
+
+	    // Get a reference to the database service
+	    database = firebase.database();
+
+	}
+
+	init();
+
+}
