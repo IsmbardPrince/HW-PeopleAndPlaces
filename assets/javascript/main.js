@@ -91,7 +91,7 @@ function pnpContact(resID, name, email, address, tags) {
 
 	}
 
-	////////////////////////Will's Functions//////////////////////////////////////
+	////////////////////////frontend functions//////////////////////////////////////
 
 	
 	//Initial array of labels
@@ -110,8 +110,7 @@ function pnpContact(resID, name, email, address, tags) {
 
 
 
-
-
+/*
 
 	function editContact() {
 
@@ -123,10 +122,14 @@ function pnpContact(resID, name, email, address, tags) {
 	$('#contactName').value(contact.contactName);
 	$('#editedContact').show();
 
-	console.log(contact.contactName);
+	console.log(contact.contactName)
 
 	
 	}
+
+
+
+	*/
 	////////////////////////////////////////////////////////
 
 	function deleteLabel(){   
@@ -172,7 +175,7 @@ function pnpContact(resID, name, email, address, tags) {
 		
 		//Logic to sort the labels into designated Panels
 		
-		if(labelsArray[i].includes("food") === true || labelsArray[i].includes("food") === true){
+		if(labelsArray[i].includes("food") === true || labelsArray[i].includes("Food") === true || labelsArray[i].includes("restaurant") === true){
 			
 			//console.log("it's a restaurant");
 			
