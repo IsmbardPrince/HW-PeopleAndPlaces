@@ -67,7 +67,7 @@ function pnpContact(resID, name, email, address, tags) {
 	
 	//Note: We may not need this function since the on click event already performs it
 
-	this.addTag = function(tag, value) {
+	this.addTag = function(tag) {
 
 	}
 
@@ -79,17 +79,22 @@ function pnpContact(resID, name, email, address, tags) {
 
 	}
 
+/* Don't think we need this anymore
 	// this.editTag(tag, newValue)
 	// Updates the specified tag to a new value for the contact represented by this object
 	//		tag - the specific tag of this contact to be edited
 	//		newValue - the new value to associate with the tag
 	// TODO actually implement this stub
-	this.editTag = function(tag, newValue) {
+	this.editTag = function(tag) {
 
 	
 
 
 	}
+	 ^^^^^^^^^^^^^^^^
+*/
+
+}
 
 	////////////////////////Will's Functions//////////////////////////////////////
 
@@ -244,11 +249,11 @@ function pnpTags() {
 
     var database;
 
-    this.addContact(contact, owner, tags) {
+    this.addContact = function(contact, owner, tags) {
 
     }
 
-    this.addTags(contact, owner, tags) {
+    this.addTags = function(contact, owner, tags) {
     	
     }
 
