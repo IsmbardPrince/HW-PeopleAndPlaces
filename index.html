@@ -13,11 +13,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+    <!-- script for google maps api search  -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCeX4km95QWqdGNVmUyViVokHeGtgKEdJc&libraries=places&"></script>
 
     
 	
     
-<div class="container">
 
 
 <!-- Main Bootstrap Search -->
@@ -29,8 +30,8 @@
     </div>
 
     <!-- Row for Searching -->
-    <div class="row">
-        <div class="col-sm-12">
+    <div class="row" id ="contactsList">
+        <div class="col-sm-12" >
         <br>
             
               
@@ -43,7 +44,6 @@
                 </div>
                 
                 <!-- Here we create an HTML Form for handling the Label inputs-->
-                    <form role="form">  
 
 
 
@@ -59,13 +59,13 @@
                        <div id="contactsDisplay">   
                        
                     
-                        <div id="editedContact">
+                        <!-- <div id="editedContact">
                             Name: <input type="text" id="contactName"><br>
                             Address: <input type="text" id="contactAddress"><br>
                             Tags: <input type="text" id="tags"><br>
 
                             
-                        </div>
+                        </div> -->
 
                        
 
@@ -80,14 +80,11 @@
                              </tr>
                            </thead>
                         
-                        </table>  -->
-
-                    
-                      
-                        
+                        </table>  -->   
 
                   
 
+                    </div>
                 </div>
             </div>
         </div>
@@ -98,42 +95,118 @@
 
 <!-- Label Boxes -->
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12" id="addNewLabels">
         <br>
             <!-- First panel is for handling the search parameters -->
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><strong><i class="fa-folder-open-o"></i>Labels</strong></h3>
+                    <h3 class="panel-title"><strong><i class="fa-folder-open-o"></i>Tags<span id="contactNametoEdit"></span></strong></h3>
                 </div>
                 
                <!--- Labels   -->
-                <div class="panel-body">
-
-
-                      <!-- Here we create the text box for capturing the activity term-->
-                      <div class="form-group">
-                        
-                        
-                        <input type="text" class="form-control" id="labelBox" placeholder="Hikes, sushi, etc.">
-                      
-                      </div>
-                         
-                         <!-- Adds Labels --> 
-                        <button type="submit" class="btn btn-default" id="addLabelButton"><i class="fa fa-check-circle-o"></i>Add Label</button>
                 
-                        <!-- Resets --> 
-                        <button type="reset" class="btn btn-default" id="resetLabelsButton"><i class="fa fa-check-circle-o"></i>Clear All Labels</button>
- 
-                        <!-- Deletes Label   -->
-                         <button type="button" class="btn btn-default" id="deleteLabelButton"><i class="fa fa-check-circle-o"></i>Delete Label</button>
-                    
-                    </form>
+
+                <div class="row" id='selectLabels'>
+                    <div class="col-sm-3">
+                <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+                        
+                        <div class="panel panel-primary">
+
+                            <!-- Panel Heading for the retrieved articles box -->
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><strong><i class="fa fa-map"></i>General</strong></h3>
+                            </div>
+
+                                <!-- This main panel will hold the map -->
+                            <div class="panel-body" id="labelsDisplay">
+                            </div>
+                        
+                        </div>
+
+                  </div>
+
+              
+                <div class="col-sm-3">
+                    <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+                        <div class="panel panel-primary">
+
+                            <!-- Panel Heading for the retrieved articles box -->
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><strong><i class="fa fa-map"></i>Restaurants</strong></h3>
+                            </div>
+
+                            <!-- This main panel will hold the map -->
+                            <div class="panel-body" id="restaurantDisplay">
+                            </div>
+                        
+                        </div>
 
                 </div>
+                        
+                
+                 <div class="col-sm-3">
+
+                    <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+                        <div class="panel panel-primary">
+
+                            <!-- Panel Heading for the retrieved articles box -->
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><strong><i class="fa fa-map"></i>Activities</strong></h3>
+                            </div>
+
+                            <!-- This main panel will hold the map -->
+                            <div class="panel-body" id="activitiesDisplay">
+                            </div>
+                    
+                        </div>
+
+                  </div>     
+
+                    
+                    <div class="col-sm-3">
+                    <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+                            <div class="panel panel-primary">
+
+                                <!-- Panel Heading for the retrieved articles box -->
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><strong><i class="fa fa-map"></i>Nightlife</strong></h3>
+                                </div>
+
+                                <!-- This main panel will hold the map -->
+                                <div class="panel-body" id="nightDisplay">
+                                </div>
+                            
+                            </div>
+                    </div>
+           
+                </div> 
+                <div class="panel-body" id="updateLabelsForm">
+
+                    <h3>Create a new tag:</h3>
+
+                      <!-- Here we create the text box for capturing the activity term-->
+                  <div class="form-group">
+                    
+                    
+                    <input type="text" class="form-control" id="labelBox" placeholder="Hikes, sushi, etc.">
+                  
+                  </div>
+                     
+                     <!-- Adds Labels --> 
+                    <button type="submit" class="btn btn-default" id="addLabelButton"><i class="fa fa-check-circle-o"></i>Add Tag</button>
+
+                    <!-- Resets --> 
+                    <button type="reset" class="btn btn-default" id="resetLabelsButton"><i class="fa fa-check-circle-o"></i>Clear All Tags</button>
+
+                    <!-- Deletes Label   -->
+                     <button type="button" class="btn btn-default" id="deleteLabelButton"><i class="fa fa-check-circle-o"></i>Delete Tag</button>
+                                
+
+                </div>
+
             </div>
         </div>
-    </div>
-</div>   
+    </div> 
 
 
 
@@ -142,112 +215,39 @@
   
         
         
-<div class="container">
-    <div class="row">
-         <div class="col-sm-3">
-        <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
+       
+
+   <div class="row">
+       <div class="col-sm-12" >
+           <h2>Do Stuff</h2>
+            <div id="activities">
                 
-                <div class="panel panel-primary">
+            </div>
 
-                    <!-- Panel Heading for the retrieved articles box -->
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><strong><i class="fa fa-map"></i>General</strong></h3>
-                    </div>
-
-                        <!-- This main panel will hold the map -->
-                    <div class="panel-body" id="labelsDisplay">
-                    </div>
-                
-                </div>
-
-          </div>
-
-      
-        <div class="col-sm-3">
-            <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
-                <div class="panel panel-primary">
-
-                    <!-- Panel Heading for the retrieved articles box -->
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><strong><i class="fa fa-map"></i>Restaurants</strong></h3>
-                    </div>
-
-                    <!-- This main panel will hold the map -->
-                    <div class="panel-body" id="restaurantDisplay">
-                    </div>
-                
-                </div>
-
-        </div>
-                
-        
-         <div class="col-sm-3">
-
-            <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
-                <div class="panel panel-primary">
-
-                    <!-- Panel Heading for the retrieved articles box -->
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><strong><i class="fa fa-map"></i>Activities</strong></h3>
-                    </div>
-
-                    <!-- This main panel will hold the map -->
-                    <div class="panel-body" id="activitiesDisplay">
-                    </div>
-            
-                </div>
-
-          </div>     
-
-            
-        <div class="col-sm-3">
-        <!-- This panel will initially be made up of a panel and wells for each of the articles retrieved -->
-                <div class="panel panel-primary">
-
-                    <!-- Panel Heading for the retrieved articles box -->
-                    <div class="panel-heading">
-                        <h3 class="panel-title"><strong><i class="fa fa-map"></i>Nightlife</strong></h3>
-                    </div>
-
-                    <!-- This main panel will hold the map -->
-                    <div class="panel-body" id="nightDisplay">
-                    </div>
-                
-                </div>
-        </div>
-   
-    </div>    
-
-
+       </div>
+   </div>
    
 
-<div class="row">
+    <div class="row" >
         <div class="col-sm-12">
         <br>
             <!-- First panel is for handling the search parameters -->
-            <div class="panel panel-primary">
+            <div style="width:100%; height:100%" class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title"><strong><i class="fa-folder-open-o"></i>Map</strong></h3>
                 </div>
                 
-               <!--- Labels   -->
-                <div class="panel-body">
-
-                    <!-- Here we create an HTML Form for handling the Label inputs-->
-                    
- 
-                  
-                    </form>
-
-                </div>
+                
             </div>
         </div>
     </div>
+    <div id="mapHolder">
+        <div id="map"></div>
+    </div>
 
+</div>
+    
 
-
-</div>            
-          
 
 
 

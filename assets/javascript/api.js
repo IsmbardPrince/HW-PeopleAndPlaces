@@ -160,6 +160,10 @@ function pnpPeople() {
 				}
          
 				pushContactData(); // push the contact data to the main user object
+                renderContacts(self.userContacts);
+                renderLabels();
+                contactList = self.userContacts;
+                listActivities();
 
 			}
 
@@ -235,8 +239,7 @@ function pnpPeople() {
 }
 
 //function to create map
-function createMap(tagToSearch,area){
-  function initMap() {
+function initMap(tagToSearch,area) {
         //create a geocoder object
         geocoder = new google.maps.Geocoder();
         //placeholder latlng until we do the search
@@ -269,6 +272,10 @@ function createMap(tagToSearch,area){
             });
             //icon for the starting point is green dot 
             marker.setIcon("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
+            google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent("<p>Starting Location</p><p>"+area+"</p>");
+            infowindow.open(map, this);
+          });
           } else {
             alert('Geocode was not successful for the following reason: ' + status);
          }
@@ -306,8 +313,16 @@ function createMap(tagToSearch,area){
         map.fitBounds(bounds);
         //when a marker is clicked, show the info window
         google.maps.event.addListener(marker, 'click', function() {
-          infowindow.setContent("<h3>"+place.name + " - Rating: "+ place.rating + "</h3><p>" + place.formatted_address +"</p>");
+            if (place.rating != undefined){
+                infowindow.setContent("<h4>"+place.name + " - Rating: "+ place.rating + "</h4><p>" + place.formatted_address +"</p>");
+            }else{
+                infowindow.setContent("<h4>"+place.name +"</h4><p>" + place.formatted_address +"</p>");
+            }
+          
           infowindow.open(map, this);
+        });
+        google.maps.event.addListener(map, 'click', function() {
+          infowindow.close();
         });
 
         };
@@ -315,7 +330,6 @@ function createMap(tagToSearch,area){
         
       })
   
-      }
 }
 
 /*

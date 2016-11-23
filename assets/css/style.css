@@ -1,0 +1,43 @@
+.contactDiv:hover{
+    background-color: #DDD;
+    cursor:pointer;
+}
+
+#selectLabels{
+    margin-top:30px;
+}
+
+.currentContactTags{
+    margin:20px;
+}
+
+.tagSelected{
+    background-color: #00DD44;
+}
+
+.tagDeleted{
+    background-color: #DD0000;
+}
+
+
+html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width:100%;
+}
+
+.container{
+    height: 100%;
+    width: 100%;
+}
+
+#mapHolder{
+    width:100%;
+    height:90%;
+    margin:0px;
+}
+
+#map{
+    height:100%;
+}

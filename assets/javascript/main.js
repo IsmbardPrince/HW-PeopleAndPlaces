@@ -12,6 +12,13 @@ var people; // object wrapping the Google People API
 var map;
 var infowindow;
 
+//global to hold the contact list in local storage
+var contactList = [];
+//global to determine if a contact has been selected
+var contactSelected = false;
+//global to hold the current contact, if one has been selected
+var currentContact;
+
 var gapiScriptLoaded = false; // flag to manage the google api's asynchronous load
 
 // pnpUser(userName)
@@ -55,7 +62,7 @@ function pnpContact(resID, name, email, address, tags) {
 	this.name = name; // the name of the contact
 	this.email = email; // the email of the contact
 	this.address = address; // address of the contact
-	this.tags = tags; // array of tag, value objects for any tags attached to the contact
+	this.tags = []; // array of tag, value objects for any tags attached to the contact
 
 	// Public methods of the object
 
@@ -90,6 +97,7 @@ function pnpContact(resID, name, email, address, tags) {
 
 
 	}
+}
 
 	////////////////////////frontend functions//////////////////////////////////////
 
@@ -99,9 +107,9 @@ function pnpContact(resID, name, email, address, tags) {
 	'French food', 'Museums', 'Parks', 'Pools', 'Monuments', 'Clubs', 'Dance Music'];
 
 	//Dummy Data for developing purposes 
-	var contactsArray  = [{contactName:"Mike", address:"100 N Brazos Austin, TX", tags: ['Sushi', 'Movies', 'Golf','Concerts','Art Museum']},
+	/*var contactsArray  = [{contactName:"Mike", address:"100 N Brazos Austin, TX", tags: ['Sushi', 'Movies', 'Golf','Concerts','Art Museum']},
                 				{contactName:"Steve", address:"312 S Madison St., La Grange IL", tags: ['Concerts', 'Dance', 'Movies','Baseball']},
-                				{contactName:"Lisa", address:"1060 W Addison St., Chicago IL", tags:['Bowling', 'Concerts', 'Art Museum', 'Golf','Sailing']}];
+                				{contactName:"Lisa", address:"1060 W Addison St., Chicago IL", tags:['Bowling', 'Concerts', 'Art Museum', 'Golf','Sailing']}];*/
 
 
 
@@ -207,20 +215,28 @@ function pnpContact(resID, name, email, address, tags) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-
-	function renderContacts() {
+	//rendering the contacts in the contacts div
+	function renderContacts(contactsArray) {
 
 	$('#contactsDisplay').empty();	
 
+	$('#contactsDisplay').append("<p>Select a contact to add or remove tags:</p>")
+
 
 	for(var i=0; i < contactsArray.length; i++){
-		var edit = $('<button type="submit" class="editButton" value="' + i + '">Edit</button>');
 		var contact = contactsArray[i];
-		var c = $('<div class="contactDiv">');
-		c.text(contact.contactName + " " + contact.address + " " + contact.tags.toString()); //Displays label text on button
+		var c = $('<div class="contactDiv" id="contact-'+i+ '">');
+		
+
+		//check whether there are tags on the contact already, if so, render them
+		if (contactsArray.tags){
+			c.text(contact.name + " " + contact.address + " "+ contact.tags.toString());
+		}
+		else{
+			c.text(contact.name + " " + contact.address + " ");
+		}
 		
 		c.attr('data-name', i);    
-		c.append(edit);
 		c.append('</div>');
 
 		console.log(c);
@@ -230,15 +246,32 @@ function pnpContact(resID, name, email, address, tags) {
 
 	};
 
+}
 
 
+//function to highlight current tag buttons. need to be able to handle removal from here too.
+
+function highlightTags(){
+	$(".tagSelected").removeClass("tagSelected");
+	for (var i = 0; i < labelsArray.length; i++){
+		if (currentContact.tags.includes(labelsArray[i])){
+			$(":contains('"+labelsArray[i]+"')").closest('button.label').addClass("tagSelected");
+		}
+	}
+}
 
 
-
-
-
-
-
-
+function listActivities(){
+	$("#activities").empty();
+	for (var i = 0; i < contactList.length; i++){
+		if(contactList[i].tags.length > 0){
+			$("#activities").append("<h4>"+contactList[i].name+"</h4>");
+			for (var j = 0; j < contactList[i].tags.length; j++){
+			$("#activities").append("<button class='activity' id='"+contactList[i].name+"|"+contactList[i].tags[j]+"'>"+contactList[i].tags[j]+" with "+contactList[i].name+"</button>");
+			}
+			$("#activities").append("<br>");
+		}
+	}
 
 }
+
