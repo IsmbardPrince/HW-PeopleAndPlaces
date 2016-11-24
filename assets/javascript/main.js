@@ -7,6 +7,7 @@
 // Global vars for the app
 var user; // object containing the main user and contact data for the app
 var people; // object wrapping the Google People API
+var tagsDB; // object wrapping the Firebase DB with the contact tags
 
 //these two globals should be moved to the main js file
 var map;
@@ -23,6 +24,7 @@ var gapiScriptLoaded = false; // flag to manage the google api's asynchronous lo
 function pnpUser(userName) {
 
 	// Public properties of the object
+	this.resID = ""; // the People API resource ID that uniquely identifies this user
 	this.name = ""; // the full name of the signed-in google account currently accessing the app
 	this.email = ""; // the email address of the signed-in google account currently accessing the app
 	this.address = ""; // the street address of the signed-in google account currently accessing the app
@@ -93,6 +95,163 @@ function pnpContact(resID, name, email, address, tags) {
 	}
 	 ^^^^^^^^^^^^^^^^
 */
+
+}
+
+function pnpTags() {
+
+    var database;
+    var refContacts;
+
+    this.addTags = function(contact, owner, tags) {
+
+    	var newTags = [];
+    	console.log(tags);
+		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
+			if (snapshot.val() != null) {
+    			console.log("snapshot not null");
+				newTags = snapshot.val();
+    			console.log(newTags);
+			};
+
+			for (var i = 0; i < tags.length; i++) {
+				newTags.push(tags[i]);
+			}
+    		console.log(newTags);
+
+			refContacts.child(getKeyFromId(contact)).set({
+				owner: owner,
+				tags: tags
+			});
+
+		});
+    	
+    }
+
+    this.remTag = function(contact, owner, tag) {
+
+    	var curTags = [];
+    	var newTags = [];
+
+		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
+
+			if (snapshot.val() != null) {
+				curTags = snapshot.val();
+			};
+
+			if (curTags.length > 0) {
+				ndx = curTags.indexOf(tag);
+				if (ndx >= 0) {
+					for (var i = 0; i < curTags.length; i++) {
+						if (i != ndx) {
+							newTags.push(curTags(i));
+						}
+					}
+				}
+			}
+
+			if (newTags.length > 0) {
+				refContacts.child(getKeyFromId(contact)).set({
+					owner: owner,
+					tags: tags
+				});
+			}
+
+		});
+
+    }
+
+    this.loadContactTags = function(arrayContacts, owner) {
+
+		refContacts.orderByChild("owner").equalTo(owner).once('value').then(function(snapshot) {
+			snapshot.forEach(function(child) {
+				var i = 0;
+				do {
+					var id = getIdFromKey(child.key);
+					if (arrayContacts[i].resID == id) {
+						arrayContacts[i].tags = child.val().tags;
+						break;
+					} else i++;
+				} while (i < arrayContacts.length);
+			});
+		});
+
+    }
+
+    function getKeyFromId(id) {
+    	return id.replace(/\//ig, "\\");
+    }
+
+    function getIdFromKey(key) {
+    	return key.replace(/\\/ig, "\/");
+    }
+
+	function init() {
+
+		// wait until the gapi javascript has finished loading before proceeding
+		var cntRetry = 0;
+        while (!user.ready) {
+        	// TODO something is seriously wrong if the script hasn't loaded in 500 seconds
+        	// TODO but we still probably need to write some error handling here JIC
+        	// TODO or better yet replace it with a callback
+			if (cntRetry++ < 1000) {
+				setTimeout(init, 500);
+				return;
+			} 
+        }
+
+		// Initialize Firebase
+		var config = {
+		apiKey: "AIzaSyCeX4km95QWqdGNVmUyViVokHeGtgKEdJc",
+		authDomain: "my-first-project-bd5a1.firebaseapp.com",
+		databaseURL: "https://my-first-project-bd5a1.firebaseio.com",
+		storageBucket: "my-first-project-bd5a1.appspot.com",
+		messagingSenderId: "81635511272"
+		};
+		firebase.initializeApp(config);
+
+	    // Get a reference to the database service
+	    database = firebase.database();
+
+	    refContacts = database.ref("contacts");
+
+	    self.addTags("c/0987654321", "c/1234567890", ["Italian Restaurant", "Public Golf", "Old Movies"]);
+	    self.addTags("c/1212121212", "c/1234567890", ["Mexican Restaurant", "Exclusive Private Golf", "Foreign Movies"]);
+	    self.addTags("c/3434343434", "c/1234567890", ["French Restaurant", "Public Golf", "Action Movies"]);
+	    self.addTags("c/5656565656", "c/1234567890", ["German Restaurant", "Exclusive Private Golf", "Mystery Movies"]);
+	    self.addTags("c/7878787878", "c/1234567890", ["Sushi Restaurant", "Public Golf", "Horror Movies"]);
+	    self.addTags("c/9090909090", "c/1234567890", ["Thai Restaurant", "Exclusive Private Golf", "Romance Movies"]);
+
+	    var array = [];
+	    array.push(new pnpContact("c/0987654321"));
+	    array.push(new pnpContact("c/1212121212"));
+	    array.push(new pnpContact("c/3434343434"));
+	    array.push(new pnpContact("c/5656565656"));
+	    array.push(new pnpContact("c/7878787878"));
+	    array.push(new pnpContact("c/9090909090"));
+
+//	    self.loadContactTags(array, user.resID);
+	    self.loadContactTags(array, "c/1234567890");
+
+//	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
+//	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
+//	    console.log("c/3434343434", + ", " + self.getTags("c/3434343434"));
+//	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
+//	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
+//	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
+		self.addTags("c/0987654321", "c/1234567890", ["UT Football"]);
+//	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
+//	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
+//	    console.log("c/3434343434", + ", " + self.getTags("c/3434343434"));
+//	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
+//	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
+//	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
+
+	}
+
+	self = this;
+
+	init();
 
 }
 
@@ -245,35 +404,3 @@ function pnpContact(resID, name, email, address, tags) {
 
 }
 
-function pnpTags() {
-
-    var database;
-
-    this.addContact = function(contact, owner, tags) {
-
-    }
-
-    this.addTags = function(contact, owner, tags) {
-    	
-    }
-
-	function init() {
-
-		// Initialize Firebase
-		var config = {
-		apiKey: "AIzaSyCeX4km95QWqdGNVmUyViVokHeGtgKEdJc",
-		authDomain: "my-first-project-bd5a1.firebaseapp.com",
-		databaseURL: "https://my-first-project-bd5a1.firebaseio.com",
-		storageBucket: "my-first-project-bd5a1.appspot.com",
-		messagingSenderId: "81635511272"
-		};
-		firebase.initializeApp(config);
-
-	    // Get a reference to the database service
-	    database = firebase.database();
-
-	}
-
-	init();
-
-}

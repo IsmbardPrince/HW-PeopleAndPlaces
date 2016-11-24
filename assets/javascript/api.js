@@ -176,6 +176,7 @@ function pnpPeople() {
 	// as it is ready.
     function pushUserData() {
 
+    	user.resID = curGoogleUser.getBasicProfile().getId(); // user's unique Google resource ID
 		user.name = self.userName; // the full name of the signed-in google account currently accessing the app
 		user.email = self.userEmail; // the email address of the signed-in google account currently accessing the app
 		user.address = self.userAddress; // the street address of the signed-in google account currently accessing the app
