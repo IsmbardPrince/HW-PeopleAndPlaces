@@ -13,6 +13,13 @@ var tagsDB; // object wrapping the Firebase DB with the contact tags
 var map;
 var infowindow;
 
+//global to hold the contact list in local storage
+var contactList = [];
+//global to determine if a contact has been selected
+var contactSelected = false;
+//global to hold the current contact, if one has been selected
+var currentContact;
+
 var gapiScriptLoaded = false; // flag to manage the google api's asynchronous load
 
 // pnpUser(userName)
@@ -57,7 +64,7 @@ function pnpContact(resID, name, email, address, tags) {
 	this.name = name; // the name of the contact
 	this.email = email; // the email of the contact
 	this.address = address; // address of the contact
-	this.tags = tags; // array of tag, value objects for any tags attached to the contact
+	this.tags = []; // array of tag, value objects for any tags attached to the contact
 
 	// Public methods of the object
 
@@ -93,12 +100,14 @@ function pnpContact(resID, name, email, address, tags) {
 
 
 	}
-	 ^^^^^^^^^^^^^^^^
+
 */
 
 }
 
 function pnpTags() {
+
+	this.ready = false;
 
     var database;
     var refContacts;
@@ -106,22 +115,18 @@ function pnpTags() {
     this.addTags = function(contact, owner, tags) {
 
     	var newTags = [];
-    	console.log(tags);
 		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
 			if (snapshot.val() != null) {
-    			console.log("snapshot not null");
 				newTags = snapshot.val();
-    			console.log(newTags);
 			};
 
 			for (var i = 0; i < tags.length; i++) {
 				newTags.push(tags[i]);
 			}
-    		console.log(newTags);
 
 			refContacts.child(getKeyFromId(contact)).set({
 				owner: owner,
-				tags: tags
+				tags: newTags
 			});
 
 		});
@@ -161,20 +166,41 @@ function pnpTags() {
 
     }
 
-    this.loadContactTags = function(arrayContacts, owner) {
+	// loadContactTags()
+	// This function ensures that we have loaded the contact owner's id before we load any existing tags
+	// for the contacts in the contact list
+    function loadContactTags() {
 
-		refContacts.orderByChild("owner").equalTo(owner).once('value').then(function(snapshot) {
+		// wait until we are sure the owner's id and contact list is available
+		var cntRetry = 0;
+	    while (!user.userReady || !user.contactsReady) {
+	    	// TODO need to handle the case where the object is not ready after 500 seconds
+	    	// TODO as that means something is seriously wrong
+			if (cntRetry++ < 1000) {
+				setTimeout(loadContactTags, 500);
+				return;
+			} 
+		}
+
+		// iterate through all of the contacts in the db that are owned by this user; for each user in the
+		// db, load any existing tags into their contact object for the user
+		// any contacts without existing tags and any contacts in the db which the user no longer owns
+		// are both ignored
+		refContacts.orderByChild("owner").equalTo(user.resID).once('value').then(function(snapshot) {
 			snapshot.forEach(function(child) {
 				var i = 0;
 				do {
 					var id = getIdFromKey(child.key);
-					if (arrayContacts[i].resID == id) {
-						arrayContacts[i].tags = child.val().tags;
+					if (user.contacts[i].resID == id) {
+						user.contacts[i].tags = child.val().tags;
 						break;
 					} else i++;
-				} while (i < arrayContacts.length);
+				} while (i < user.contacts.length);
 			});
 		});
+
+		// finally mark the user object that it is ready for use by the UI
+		user.ready = true;
 
     }
 
@@ -190,7 +216,7 @@ function pnpTags() {
 
 		// wait until the gapi javascript has finished loading before proceeding
 		var cntRetry = 0;
-        while (!user.ready) {
+        while (!user.userReady || !user.contactsReady) {
         	// TODO something is seriously wrong if the script hasn't loaded in 500 seconds
         	// TODO but we still probably need to write some error handling here JIC
         	// TODO or better yet replace it with a callback
@@ -215,23 +241,23 @@ function pnpTags() {
 
 	    refContacts = database.ref("contacts");
 
-	    self.addTags("c/0987654321", "c/1234567890", ["Italian Restaurant", "Public Golf", "Old Movies"]);
-	    self.addTags("c/1212121212", "c/1234567890", ["Mexican Restaurant", "Exclusive Private Golf", "Foreign Movies"]);
-	    self.addTags("c/3434343434", "c/1234567890", ["French Restaurant", "Public Golf", "Action Movies"]);
-	    self.addTags("c/5656565656", "c/1234567890", ["German Restaurant", "Exclusive Private Golf", "Mystery Movies"]);
-	    self.addTags("c/7878787878", "c/1234567890", ["Sushi Restaurant", "Public Golf", "Horror Movies"]);
-	    self.addTags("c/9090909090", "c/1234567890", ["Thai Restaurant", "Exclusive Private Golf", "Romance Movies"]);
+//	    self.addTags("c/0987654321", "c/1234567890", ["Italian Restaurant", "Public Golf", "Old Movies"]);
+//	    self.addTags("c/1212121212", "c/1234567890", ["Mexican Restaurant", "Exclusive Private Golf", "Foreign Movies"]);
+//	    self.addTags("c/3434343434", "c/1234567890", ["French Restaurant", "Public Golf", "Action Movies"]);
+//	    self.addTags("c/5656565656", "c/1234567890", ["German Restaurant", "Exclusive Private Golf", "Mystery Movies"]);
+//	    self.addTags("c/7878787878", "c/1234567890", ["Sushi Restaurant", "Public Golf", "Horror Movies"]);
+//	    self.addTags("c/9090909090", "c/1234567890", ["Thai Restaurant", "Exclusive Private Golf", "Romance Movies"]);
 
-	    var array = [];
-	    array.push(new pnpContact("c/0987654321"));
-	    array.push(new pnpContact("c/1212121212"));
-	    array.push(new pnpContact("c/3434343434"));
-	    array.push(new pnpContact("c/5656565656"));
-	    array.push(new pnpContact("c/7878787878"));
-	    array.push(new pnpContact("c/9090909090"));
+//	    var array = [];
+//	    array.push(new pnpContact("c/0987654321"));
+//	    array.push(new pnpContact("c/1212121212"));
+//	    array.push(new pnpContact("c/3434343434"));
+//	    array.push(new pnpContact("c/5656565656"));
+//	    array.push(new pnpContact("c/7878787878"));
+//	    array.push(new pnpContact("c/9090909090"));
 
 //	    self.loadContactTags(array, user.resID);
-	    self.loadContactTags(array, "c/1234567890");
+//	    self.loadContactTags(array, "c/1234567890");
 
 //	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
 //	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
@@ -239,13 +265,17 @@ function pnpTags() {
 //	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
 //	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
 //	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
-		self.addTags("c/0987654321", "c/1234567890", ["UT Football"]);
+//		self.addTags("c/0987654321", "c/1234567890", ["UT Football"]);
 //	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
 //	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
 //	    console.log("c/3434343434", + ", " + self.getTags("c/3434343434"));
 //	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
 //	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
 //	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
+
+		loadContactTags();
+
+		self.ready = true;
 
 	}
 
@@ -255,7 +285,43 @@ function pnpTags() {
 
 }
 
-	////////////////////////Will's Functions//////////////////////////////////////
+// handleGapiScriptLoad()
+// Callback handler for when the Google API javascript library has completed loading
+function handleGapiScriptLoad() {
+
+	gapiScriptLoaded = true;
+
+}
+
+// loadInitData()
+// This function exists to ensure that all of our initial API calls and DB loads are complete before
+// we actually load the DOM. While this will probably not be a problem in most cases, the timer here insures
+// that it's not a problem.
+function loadInitData() {
+
+	// wait until we are sure all initial API and DB calls have completed
+	var cntRetry = 0;
+    while (!user.ready) {
+    	// TODO need to handle the case where the object is not ready after 500 seconds
+    	// TODO as that means something is seriously wrong
+		if (cntRetry++ < 1000) {
+			setTimeout(loadInitData, 500);
+			return;
+		} 
+	}
+
+	// Load the DOM
+    renderContacts(user.contacts);
+    renderLabels();
+    contactList = user.contacts;
+    listActivities();
+
+}
+
+
+
+
+	////////////////////////frontend functions//////////////////////////////////////
 
 	
 	//Initial array of labels
@@ -263,9 +329,9 @@ function pnpTags() {
 	'French food', 'Museums', 'Parks', 'Pools', 'Monuments', 'Clubs', 'Dance Music'];
 
 	//Dummy Data for developing purposes 
-	var contactsArray  = [{contactName:"Mike", address:"100 N Brazos Austin, TX", tags: ['Sushi', 'Movies', 'Golf','Concerts','Art Museum']},
+	/*var contactsArray  = [{contactName:"Mike", address:"100 N Brazos Austin, TX", tags: ['Sushi', 'Movies', 'Golf','Concerts','Art Museum']},
                 				{contactName:"Steve", address:"312 S Madison St., La Grange IL", tags: ['Concerts', 'Dance', 'Movies','Baseball']},
-                				{contactName:"Lisa", address:"1060 W Addison St., Chicago IL", tags:['Bowling', 'Concerts', 'Art Museum', 'Golf','Sailing']}];
+                				{contactName:"Lisa", address:"1060 W Addison St., Chicago IL", tags:['Bowling', 'Concerts', 'Art Museum', 'Golf','Sailing']}];*/
 
 
 
@@ -274,8 +340,7 @@ function pnpTags() {
 
 
 
-
-
+/*
 
 	function editContact() {
 
@@ -287,10 +352,14 @@ function pnpTags() {
 	$('#contactName').value(contact.contactName);
 	$('#editedContact').show();
 
-	console.log(contact.contactName);
+	console.log(contact.contactName)
 
 	
 	}
+
+
+
+	*/
 	////////////////////////////////////////////////////////
 
 	function deleteLabel(){   
@@ -336,7 +405,7 @@ function pnpTags() {
 		
 		//Logic to sort the labels into designated Panels
 		
-		if(labelsArray[i].includes("food") === true || labelsArray[i].includes("food") === true){
+		if(labelsArray[i].includes("food") === true || labelsArray[i].includes("Food") === true || labelsArray[i].includes("restaurant") === true){
 			
 			//console.log("it's a restaurant");
 			
@@ -368,20 +437,28 @@ function pnpTags() {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-
-	function renderContacts() {
+	//rendering the contacts in the contacts div
+	function renderContacts(contactsArray) {
 
 	$('#contactsDisplay').empty();	
 
+	$('#contactsDisplay').append("<p>Select a contact to add or remove tags:</p>")
+
 
 	for(var i=0; i < contactsArray.length; i++){
-		var edit = $('<button type="submit" class="editButton" value="' + i + '">Edit</button>');
 		var contact = contactsArray[i];
-		var c = $('<div class="contactDiv">');
-		c.text(contact.contactName + " " + contact.address + " " + contact.tags.toString()); //Displays label text on button
+		var c = $('<div class="contactDiv" id="contact-'+i+ '">');
+		
+
+		//check whether there are tags on the contact already, if so, render them
+		if (contactsArray.tags){
+			c.text(contact.name + " " + contact.address + " "+ contact.tags.toString());
+		}
+		else{
+			c.text(contact.name + " " + contact.address + " ");
+		}
 		
 		c.attr('data-name', i);    
-		c.append(edit);
 		c.append('</div>');
 
 		console.log(c);
@@ -391,16 +468,32 @@ function pnpTags() {
 
 	};
 
+}
 
 
+//function to highlight current tag buttons. need to be able to handle removal from here too.
+
+function highlightTags(){
+	$(".tagSelected").removeClass("tagSelected");
+	for (var i = 0; i < labelsArray.length; i++){
+		if (currentContact.tags.includes(labelsArray[i])){
+			$(":contains('"+labelsArray[i]+"')").closest('button.label').addClass("tagSelected");
+		}
+	}
+}
 
 
-
-
-
-
-
-
+function listActivities(){
+	$("#activities").empty();
+	for (var i = 0; i < contactList.length; i++){
+		if(contactList[i].tags.length > 0){
+			$("#activities").append("<h4>"+contactList[i].name+"</h4>");
+			for (var j = 0; j < contactList[i].tags.length; j++){
+			$("#activities").append("<button class='activity' id='"+contactList[i].name+"|"+contactList[i].tags[j]+"'>"+contactList[i].tags[j]+" with "+contactList[i].name+"</button>");
+			}
+			$("#activities").append("<br>");
+		}
+	}
 
 }
 

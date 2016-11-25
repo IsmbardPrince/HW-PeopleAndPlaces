@@ -158,8 +158,17 @@ function pnpPeople() {
 					self.userContacts.push(new pnpContact(resID, name, email, address));
 
 				}
-         
+
 				pushContactData(); // push the contact data to the main user object
+
+/*----------The following code has been moved to loadInitData in main.js---------------------------
+------------this is to ensure that all of the initial API and DB calls have completed--------------
+------------before we try to load the DOM-----------------------------------------------------------
+                renderContacts(self.userContacts);
+                renderLabels();
+                contactList = self.userContacts;
+                listActivities();
+-----------------------------------------------------------------------------------------------------*/
 
 			}
 
@@ -180,10 +189,12 @@ function pnpPeople() {
 		user.name = self.userName; // the full name of the signed-in google account currently accessing the app
 		user.email = self.userEmail; // the email address of the signed-in google account currently accessing the app
 		user.address = self.userAddress; // the street address of the signed-in google account currently accessing the app
-		user.userReady = true; // indicates whether the user object now has data loaded and is ready for use
-		user.ready = (user.userReady && user.contactsReady);
 
-		console.log(user);
+		// indicate that the user object user data is ready; this is an internal flag, the user
+		// object will not be ready for use by the UI until the tags for the contacts have been
+		// loaded by the tagsDB
+		user.userReady = true; // indicates whether the user object now has data loaded
+//		user.ready = (user.userReady && user.contactsReady);
 
     }
 
@@ -197,10 +208,12 @@ function pnpPeople() {
     function pushContactData() {
 
 		user.contacts = self.userContacts; // array of the user's contact objects
-		user.contactsReady = true; // indicates whether the user object now has data loaded and is ready for use
-		user.ready = (user.userReady && user.contactsReady);
 
-		console.log(user);
+		// indicate that the user object contacts are ready; this is an internal flag, the user
+		// object will not be ready for use by the UI until the tags for the contacts have been
+		// loaded by the tagsDB
+		user.contactsReady = true; // indicates whether the user object now has data loaded
+//		user.ready = (user.userReady && user.contactsReady);
 
     }
 
@@ -236,8 +249,7 @@ function pnpPeople() {
 }
 
 //function to create map
-function createMap(tagToSearch,area){
-  function initMap() {
+function initMap(tagToSearch,area) {
         //create a geocoder object
         geocoder = new google.maps.Geocoder();
         //placeholder latlng until we do the search
@@ -270,6 +282,10 @@ function createMap(tagToSearch,area){
             });
             //icon for the starting point is green dot 
             marker.setIcon("http://maps.google.com/mapfiles/ms/icons/green-dot.png");
+            google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent("<p>Starting Location</p><p>"+area+"</p>");
+            infowindow.open(map, this);
+          });
           } else {
             alert('Geocode was not successful for the following reason: ' + status);
          }
@@ -307,8 +323,16 @@ function createMap(tagToSearch,area){
         map.fitBounds(bounds);
         //when a marker is clicked, show the info window
         google.maps.event.addListener(marker, 'click', function() {
-          infowindow.setContent("<h3>"+place.name + " - Rating: "+ place.rating + "</h3><p>" + place.formatted_address +"</p>");
+            if (place.rating != undefined){
+                infowindow.setContent("<h4>"+place.name + " - Rating: "+ place.rating + "</h4><p>" + place.formatted_address +"</p>");
+            }else{
+                infowindow.setContent("<h4>"+place.name +"</h4><p>" + place.formatted_address +"</p>");
+            }
+          
           infowindow.open(map, this);
+        });
+        google.maps.event.addListener(map, 'click', function() {
+          infowindow.close();
         });
 
         };
@@ -316,7 +340,6 @@ function createMap(tagToSearch,area){
         
       })
   
-      }
 }
 
 /*
