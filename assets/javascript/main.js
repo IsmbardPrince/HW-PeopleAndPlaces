@@ -311,6 +311,7 @@ function loadInitData() {
 	}
 
 	// Load the DOM
+	console.log(user.contacts);
     renderContacts(user.contacts);
     renderLabels();
     contactList = user.contacts;
