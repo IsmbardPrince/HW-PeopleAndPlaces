@@ -33,11 +33,18 @@ html, body{
 }
 
 #mapHolder{
-    width:100%;
-    height:90%;
+    width:77%;
+    height:75%;
     margin:0px;
+    float:left;
 }
 
 #map{
     height:100%;
+}
+
+#weather{
+    float:right;
+    width:20%;
+    margin-right:15px;
 }
