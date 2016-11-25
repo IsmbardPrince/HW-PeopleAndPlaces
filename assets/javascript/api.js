@@ -262,7 +262,6 @@ function initMap(tagToSearch,area) {
           center: latlng,
           zoom: 12
         });
-
         //convert the string search into an address to search 
         geocoder.geocode( {address:area}, function(results, status) 
         {
@@ -289,7 +288,9 @@ function initMap(tagToSearch,area) {
           } else {
             alert('Geocode was not successful for the following reason: ' + status);
          }
-         //displaying search results
+        //now that we have the coordinates, we can kick off the weather api call with that info
+        weatherSearch(results[0].geometry.location.lat(), results[0].geometry.location.lng());
+        //displaying search results
         infowindow = new google.maps.InfoWindow();
         var service = new google.maps.places.PlacesService(map);
         //make sure we're searching the right thing
@@ -342,29 +343,17 @@ function initMap(tagToSearch,area) {
   
 }
 
-/*
-var contactsList = [];
-function getContacts(){
-  //ajax call to get a list of contacts
-  $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/me}/connections" method:"GET"}).done(function(response){
-    console.log(response);
-    //loop through the response and save off the name and do the address call
-    for (var i = 0; i<response.connections.length; i++ ){
-      var contactName = response.connections[i].names[0].displayName
-      
-      //save the resource name 
-      var resourceName = response.connections[i].resourceName;
-      //second ajax call to get the address - uses a different request
-      $.ajax({url:"https://people.googleapis.com/v1/{resourceName=people/"+resourceName+"}" method:"GET"}).done(function(responseTwo){
-        console.log (responseTwo);
-        var address = responseTwo.addresses[0].formattedValue;
+function weatherSearch(lat, lon){
+    $("#weather").empty();
+    //get the forecast for the next 9-12 hours
+    var url = "http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";
+    $.get(url,function(response){
+        console.log(response);
+        $("#weather").append("<h3>Forecast for "+response.city.name+":");
+        $("#weather").append("<p><strong>"+moment.utc(response.list[0].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[0].main.temp+"F - "+ response.list[0].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[1].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[1].main.temp+"F - "+ response.list[1].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[2].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[2].main.temp+"F - "+ response.list[2].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[3].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[3].main.temp+"F - "+ response.list[3].weather[0].description);
 
-        //push an object of contact Name and contact address to the array contactList
-        contactsList.push({contactName:contactName, contactAddress: address});
-      }
-    }
-
-  })
-
+    })
 }
-*/
