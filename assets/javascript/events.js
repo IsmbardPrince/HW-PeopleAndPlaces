@@ -45,7 +45,7 @@ $("#addLabelButton").on("click", function(){
 //This on click event calls the deleteLabelButton function
 
 
-$("#deleteLabelButton").on("click", deleteLabel);
+//$("#deleteLabelButton").on("click", deleteLabel);
 
 
 //This on click event resets all of the label displays 
@@ -93,10 +93,7 @@ $(document).on("click",".contactDiv",function(){
 //selector for buttons clicked within the label div -- adding these to the contact's tags, if a contact has been selected
 $(document.body).on("click","#selectLabels .label",function(){
 	if (contactSelected === true){
-		
-	// here is where it gets saved to the database
-	console.log(currentContact);
-
+			
 		//if the tag is selected already, we want to remove it from the array and change the color back
 		if ($(this).hasClass("tagSelected")){
 			$(this).removeClass("tagSelected");

@@ -66,6 +66,8 @@ function pnpContact(resID, name, email, address, tags) {
 	this.address = address; // address of the contact
 	this.tags = []; // array of tag, value objects for any tags attached to the contact
 
+	var self = this;
+
 	// Public methods of the object
 
 	// this.addTag(tag, value)
@@ -76,17 +78,21 @@ function pnpContact(resID, name, email, address, tags) {
 	
 	//Note: We may not need this function since the on click event already performs it
 
-	this.addTag = function(tag) {
+	this.addTags = function(tags) {
+
+		console.log(tags);
+
+		tagsDB.addTags(self.resID, user.resID, tags);
 
 	}
-
-	// this.remTag(tag)
-	// Removes the specified tag and its associated value from the contact represented by this object
-	//		tag - the specific tag to remove from this contact
-	// TODO actually implement this stub
-	this.remTag = function(tag) {
-
-	}
+//
+//	// this.remTag(tag)
+//	// Removes the specified tag and its associated value from the contact represented by this object
+//	//		tag - the specific tag to remove from this contact
+//	// TODO actually implement this stub
+//	this.remTag = function(tag) {
+//
+//	}
 
 /* Don't think we need this anymore
 	// this.editTag(tag, newValue)
@@ -114,25 +120,30 @@ function pnpTags() {
 
     this.addTags = function(contact, owner, tags) {
 
-    	var newTags = [];
-		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
-			if (snapshot.val() != null) {
-				newTags = snapshot.val();
-			};
+//    	var newTags = [];
+//		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
+//			if (snapshot.val() != null) {
+//				newTags = snapshot.val();
+//			};
+//
+//			for (var i = 0; i < tags.length; i++) {
+//				newTags.push(tags[i]);
+//			}
 
-			for (var i = 0; i < tags.length; i++) {
-				newTags.push(tags[i]);
-			}
+			console.log(contact + ", " + owner + ", " + tags);
 
 			refContacts.child(getKeyFromId(contact)).set({
 				owner: owner,
-				tags: newTags
+				tags: tags
 			});
 
-		});
+//		});
+
+	this.ready = true;
     	
     }
 
+/* Don't believe we need this any more
     this.remTag = function(contact, owner, tag) {
 
     	var curTags = [];
@@ -165,6 +176,7 @@ function pnpTags() {
 		});
 
     }
+*/
 
 	// loadContactTags()
 	// This function ensures that we have loaded the contact owner's id before we load any existing tags
