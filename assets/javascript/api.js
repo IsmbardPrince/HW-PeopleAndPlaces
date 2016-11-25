@@ -334,6 +334,7 @@ function initMap(tagToSearch,area) {
 }
 
 function weatherSearch(lat, lon){
+    $("#weather").empty();
     //get the forecast for the next 9-12 hours
     var url = "http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";
     $.get(url,function(response){
