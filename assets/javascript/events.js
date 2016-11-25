@@ -66,8 +66,7 @@ $('#resetLabelsButton').on('click', function(){
 
 // selecting a contact to edit tags
 
-//$(document.body).on("click",".contactDiv",function(){
-$(document).on("click",".contactDiv",function(){
+$(document.body).on("click",".contactDiv",function(){
 	$(".contactDiv").css("background-color","white");
 	$(".contactDiv").css("border","none");
 	$(this).css("background-color",'#DDD');
