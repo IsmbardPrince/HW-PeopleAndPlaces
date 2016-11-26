@@ -32,6 +32,7 @@ $("#addLabelButton").on("click", function(){
 	
 	//Calls the render labels function
 	renderLabels();
+	highlightTags();
 	
 	//Prevents the form from discarding the console.log 
 	event.preventDefault();
@@ -78,7 +79,10 @@ $(document.body).on("click",".contactDiv",function(){
 	contactSelected = true;
 	//clear out the space for tags before adding new one 
 	$(".currentContactTags").remove();
-	$("#selectLabels").before("<h4 class='currentContactTags'>No tags for this contact yet.</h4>");
+	$("#labelsDiv").remove();
+	$("#selectLabels").before("<div class='panel-body' id='labelsDiv'><h4 class='currentContactTags'>No tags for this contact yet.</h4></div>");
+	$("#saveTags").remove();
+	$(".currentContactTags").after("<button id='saveTags'>Save Tags</button>");
 	if(currentContact.tags.length > 0){
 		$(".currentContactTags").empty();
 		for (var i = 0; i < currentContact.tags.length; i++){
@@ -127,6 +131,7 @@ $(document.body).on("click","#selectLabels .label",function(){
 $(document).on('click',".activity",function(){
 		var name = this.id.slice(0,this.id.indexOf("|"));
 		var tagToSearch = this.id.slice(this.id.indexOf("|")+1);
+		$("#mapHolder").css("height","75%");
 		console.log(name);
 		console.log(tagToSearch);
 		var areaToSearch;
@@ -140,6 +145,10 @@ $(document).on('click',".activity",function(){
 		initMap(tagToSearch, areaToSearch);
 	})
 
+//save tags - send to firebase
+$(document.body).on("click","#saveTags", function(){
+	currentContact.addTags(currentContact.tags);
+	});
 
 ///////////////////////////////////////////////////////////
 

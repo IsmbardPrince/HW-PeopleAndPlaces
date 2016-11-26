@@ -3,9 +3,6 @@
     cursor:pointer;
 }
 
-#selectLabels{
-    margin-top:30px;
-}
 
 .currentContactTags{
     margin:20px;
@@ -34,7 +31,6 @@ html, body{
 
 #mapHolder{
     width:77%;
-    height:75%;
     margin:0px;
     float:left;
 }
@@ -47,4 +43,15 @@ html, body{
     float:right;
     width:20%;
     margin-right:15px;
+}
+
+.currentContactTags{
+    width:80%;
+    float:left;
+}
+
+#saveTags{
+    float:right;
+    margin-top: 20px;
+    margin-right: 10px;
 }

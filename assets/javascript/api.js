@@ -256,7 +256,7 @@ function initMap(tagToSearch,area) {
         var latlng = new google.maps.LatLng(53.3496, -6.3263);
         //set the initial bounds of the map, update when pins are dropped
         var bounds = new google.maps.LatLngBounds();
-
+        
         //creating the map object - appending it to the map ID
         map = new google.maps.Map(document.getElementById('map'), {
           center: latlng,
