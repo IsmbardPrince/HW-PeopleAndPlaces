@@ -161,15 +161,6 @@ function pnpPeople() {
 
 				pushContactData(); // push the contact data to the main user object
 
-/*----------The following code has been moved to loadInitData in main.js---------------------------
-------------this is to ensure that all of the initial API and DB calls have completed--------------
-------------before we try to load the DOM-----------------------------------------------------------
-                renderContacts(self.userContacts);
-                renderLabels();
-                contactList = self.userContacts;
-                listActivities();
------------------------------------------------------------------------------------------------------*/
-
 			}
 
          });
@@ -194,7 +185,6 @@ function pnpPeople() {
 		// object will not be ready for use by the UI until the tags for the contacts have been
 		// loaded by the tagsDB
 		user.userReady = true; // indicates whether the user object now has data loaded
-//		user.ready = (user.userReady && user.contactsReady);
 
     }
 
@@ -213,7 +203,6 @@ function pnpPeople() {
 		// object will not be ready for use by the UI until the tags for the contacts have been
 		// loaded by the tagsDB
 		user.contactsReady = true; // indicates whether the user object now has data loaded
-//		user.ready = (user.userReady && user.contactsReady);
 
     }
 

@@ -9,7 +9,7 @@ var user; // object containing the main user and contact data for the app
 var people; // object wrapping the Google People API
 var tagsDB; // object wrapping the Firebase DB with the contact tags
 
-//these two globals should be moved to the main js file
+//these two globals are for the geolocation functions
 var map;
 var infowindow;
 
@@ -36,14 +36,15 @@ function pnpUser(userName) {
 	this.email = ""; // the email address of the signed-in google account currently accessing the app
 	this.address = ""; // the street address of the signed-in google account currently accessing the app
 	this.contacts = []; // array of the user's contact objects
-	this.userReady = false; // indicates whether the object has data loaded and is ready for use
-	this.contactsReady = false; // indicates whether the object has data loaded and is ready for use
+	this.userReady = false; // indicates whether the user's profile data has been loaded and is ready for use
+	this.contactsReady = false; // indicates whether the user's contact data has been loaded and is ready for use
 	this.ready = (this.userReady && this.contactsReady); // indicates whether the object has data loaded and is ready for use
 
 	// Private object variables
 	var self = this; // convenience variable for private functions
 
 	// Public methods of the object
+	// None at this time
 
 }
 
@@ -55,8 +56,6 @@ function pnpUser(userName) {
 //		email - the email of the contact
 //		address - address of the contact
 //		tags - array of tag, value objects for any tags attached to the contact
-// TODO this constructor needs to be moved to the top app level so it can be used by both
-// the pnpUser and pnpPeople classes
 function pnpContact(resID, name, email, address, tags) {
 
 	// Public properties of the object
@@ -64,123 +63,62 @@ function pnpContact(resID, name, email, address, tags) {
 	this.name = name; // the name of the contact
 	this.email = email; // the email of the contact
 	this.address = address; // address of the contact
-	this.tags = []; // array of tag, value objects for any tags attached to the contact
+	this.tags = []; // array of tags attached to the contact
 
 	var self = this;
 
 	// Public methods of the object
 
-	// this.addTag(tag, value)
-	// Adds the specified tag and value to the contact represented by this object
-	//		tag - the specific tag to add to this contact
-	//		value - the value to associate with the tag
-	// TODO actually implement this stub
-	
-	//Note: We may not need this function since the on click event already performs it
-
+	// pnpContact.addtags(tags)
+	// This method writes the provided tag array to the Firebase database for the contact associated
+	// with this object instance. All editing of tags is handled by the UI and the tag list for the entire
+	// tag list for the contact is replaced by a new list by this method whenever it is changed. This means
+	// that no additional database access methods are necessary for tag updates or deletions.
 	this.addTags = function(tags) {
 
-		console.log(tags);
-
+		// Set this contact's and owner's IDs to write the tag list to the appropriate contact record
 		tagsDB.addTags(self.resID, user.resID, tags);
 
 	}
-//
-//	// this.remTag(tag)
-//	// Removes the specified tag and its associated value from the contact represented by this object
-//	//		tag - the specific tag to remove from this contact
-//	// TODO actually implement this stub
-//	this.remTag = function(tag) {
-//
-//	}
-
-/* Don't think we need this anymore
-	// this.editTag(tag, newValue)
-	// Updates the specified tag to a new value for the contact represented by this object
-	//		tag - the specific tag of this contact to be edited
-	//		newValue - the new value to associate with the tag
-	// TODO actually implement this stub
-	this.editTag = function(tag) {
-
-	
-
-
-	}
-
-*/
 
 }
 
+// pnpTags()
+// This is the constructor for the Firebase API service object. It handles all the actual API
+// interactions to add and retrieve contact tag information from the Firebase database.
+// When this object is instantiated, it automatically initializes the API interface and then uses that
+// interface to acquire any existing tags for contacts of the signed-in user, pushing that data to
+// the app's main user object. At that point the main user object is fully initialized and ready for use
+// by the UI. Since the People API service object contains data needed to perform the
+// initial tag retrieval, it must have completed initialization before this object can complete its
+// initialization.
 function pnpTags() {
 
+	// Flag to indicate this service object is ready for use
 	this.ready = false;
 
-    var database;
-    var refContacts;
+	// Object globals
+    var database; // contains the Firebase access global
+    var refContacts; // contains the Firebase reference to the Contact records
 
+    // pnpTags.addTags(contact, owner, tags)
+    // This method writes the supplied tags array to the contact record for the specified
+    // Contact and owner. The newly written tags will completely erase any tags for that
+    // contact and owner which previously existed.
     this.addTags = function(contact, owner, tags) {
 
-//    	var newTags = [];
-//		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
-//			if (snapshot.val() != null) {
-//				newTags = snapshot.val();
-//			};
-//
-//			for (var i = 0; i < tags.length; i++) {
-//				newTags.push(tags[i]);
-//			}
-
-			console.log(contact + ", " + owner + ", " + tags);
-
-			refContacts.child(getKeyFromId(contact)).set({
-				owner: owner,
-				tags: tags
-			});
-
-//		});
-
-	this.ready = true;
+    	// write the tags into the Firebase ID for the specified contact
+		refContacts.child(getKeyFromId(contact)).set({
+			owner: owner,
+			tags: tags
+		});
     	
     }
 
-/* Don't believe we need this any more
-    this.remTag = function(contact, owner, tag) {
-
-    	var curTags = [];
-    	var newTags = [];
-
-		refContacts.child(getKeyFromId(contact) + "/tags").once('value').then(function(snapshot) {
-
-			if (snapshot.val() != null) {
-				curTags = snapshot.val();
-			};
-
-			if (curTags.length > 0) {
-				ndx = curTags.indexOf(tag);
-				if (ndx >= 0) {
-					for (var i = 0; i < curTags.length; i++) {
-						if (i != ndx) {
-							newTags.push(curTags(i));
-						}
-					}
-				}
-			}
-
-			if (newTags.length > 0) {
-				refContacts.child(getKeyFromId(contact)).set({
-					owner: owner,
-					tags: tags
-				});
-			}
-
-		});
-
-    }
-*/
-
 	// loadContactTags()
-	// This function ensures that we have loaded the contact owner's id before we load any existing tags
-	// for the contacts in the contact list
+	// This function loads any existing tags for contacts which are owned by the currently signed-in
+	// user. This function requires that the People API service object has completed initialization so
+	// that we can access the currently signed in user's resource ID.
     function loadContactTags() {
 
 		// wait until we are sure the owner's id and contact list is available
@@ -216,17 +154,26 @@ function pnpTags() {
 
     }
 
+    // getKeyFromId(id)
+    // Since resource IDs obtained from the Google People ID can contain "/" characters, which are
+    // invalid in a Firebase key field, we must translate the "/" characters into "\" characters.
+    // That is what this function does.
     function getKeyFromId(id) {
     	return id.replace(/\//ig, "\\");
     }
 
+    // getIdFromKey(key)
+    // Since resource IDs obtained from a contact record in the Firebase db will have had "/" characters
+    // mapped to "\" characters, we need to change them back to "/" characters for string comparison
+    // purposes. That is what this function does.
     function getIdFromKey(key) {
     	return key.replace(/\\/ig, "\/");
     }
 
 	function init() {
 
-		// wait until the gapi javascript has finished loading before proceeding
+		// make sure that the Google People API service object has completed initialization before we
+		// try to initialize this object
 		var cntRetry = 0;
         while (!user.userReady || !user.contactsReady) {
         	// TODO something is seriously wrong if the script hasn't loaded in 500 seconds
@@ -250,50 +197,20 @@ function pnpTags() {
 
 	    // Get a reference to the database service
 	    database = firebase.database();
-
+	    // and a reference to the contact records in our database
 	    refContacts = database.ref("contacts");
 
-//	    self.addTags("c/0987654321", "c/1234567890", ["Italian Restaurant", "Public Golf", "Old Movies"]);
-//	    self.addTags("c/1212121212", "c/1234567890", ["Mexican Restaurant", "Exclusive Private Golf", "Foreign Movies"]);
-//	    self.addTags("c/3434343434", "c/1234567890", ["French Restaurant", "Public Golf", "Action Movies"]);
-//	    self.addTags("c/5656565656", "c/1234567890", ["German Restaurant", "Exclusive Private Golf", "Mystery Movies"]);
-//	    self.addTags("c/7878787878", "c/1234567890", ["Sushi Restaurant", "Public Golf", "Horror Movies"]);
-//	    self.addTags("c/9090909090", "c/1234567890", ["Thai Restaurant", "Exclusive Private Golf", "Romance Movies"]);
-
-//	    var array = [];
-//	    array.push(new pnpContact("c/0987654321"));
-//	    array.push(new pnpContact("c/1212121212"));
-//	    array.push(new pnpContact("c/3434343434"));
-//	    array.push(new pnpContact("c/5656565656"));
-//	    array.push(new pnpContact("c/7878787878"));
-//	    array.push(new pnpContact("c/9090909090"));
-
-//	    self.loadContactTags(array, user.resID);
-//	    self.loadContactTags(array, "c/1234567890");
-
-//	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
-//	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
-//	    console.log("c/3434343434", + ", " + self.getTags("c/3434343434"));
-//	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
-//	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
-//	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
-//		self.addTags("c/0987654321", "c/1234567890", ["UT Football"]);
-//	    console.log("c/0987654321", + ", " + self.getTags("c/0987654321"));
-//	    console.log("c/1212121212", + ", " + self.getTags("c/1212121212"));
-//	    console.log("c/3434343434", + ", " + self.getTags("c/3434343434"));
-//	    console.log("c/5656565656", + ", " + self.getTags("c/5656565656"));
-//	    console.log("c/7878787878", + ", " + self.getTags("c/7878787878"));
-//	    console.log("c/9090909090", + ", " + self.getTags("c/9090909090"));
-
+	    // Make the initial load of tags for this user's contacts
 		loadContactTags();
 
+		// Indicate that this service object is open for business
 		self.ready = true;
 
 	}
 
-	self = this;
+	self = this; // convenience variable
 
-	init();
+	init(); // Initialize this object on construction
 
 }
 
