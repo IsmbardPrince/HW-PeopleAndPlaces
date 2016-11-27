@@ -174,6 +174,12 @@ function pnpTags() {
 			});
 		});
 
+		refUsers.orderByKey().equalTo(user.resID).once('value').then(function(snapshot) {
+			snapshot.forEach(function(child) {
+				user.userTags = child.val().tags;
+			});
+		});
+
 		// finally mark the user object that it is ready for use by the UI
 		user.ready = true;
 
