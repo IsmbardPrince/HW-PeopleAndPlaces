@@ -9,7 +9,7 @@
 }
 
 .tagSelected{
-    background-color: #00DD44;
+    background-color: #00DD44 !important;
 }
 
 .tagDeleted{
