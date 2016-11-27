@@ -356,6 +356,7 @@ function loadInitData() {
 	
 	console.log(user.userTags);
 	//Loops through array of labels
+	//Loops through array of labels
 	for (var i = 0; i < labelsArray.length; i++){
 
 		
@@ -368,28 +369,48 @@ function loadInitData() {
 		
 		//Logic to sort the labels into designated Panels
 		
-		if(labelsArray[i].includes("food") === true || labelsArray[i].includes("Food") === true || labelsArray[i].includes("restaurant") === true){
-			
-			//console.log("it's a restaurant");
-			
-			$('#restaurantDisplay').append(l); /*Adds buttons to HTML*/
+		if(
 
-		}else if(labelsArray[i].includes("club") || labelsArray[i].includes("Club") === true || labelsArray[i].includes("live") === true || labelsArray[i].includes("Music") === true) {
 
-			//console.log("it's a nightlife activity");
+			labelsArray[i].includes("food") || labelsArray[i].includes("Food") || labelsArray[i].includes("restaurant") || labelsArray[i].includes("Restaurant") || labelsArray[i].includes("bistro") || 
+			labelsArray[i].includes("Bistro") || labelsArray[i].includes("bar") || labelsArray[i].includes("Bar") || labelsArray[i].includes("café")|| labelsArray[i].includes("Café") || labelsArray[i].includes("cafeteria") 
+			|| labelsArray[i].includes("Cafeteria") || labelsArray[i].includes("buffet")|| labelsArray[i].includes("Buffet") || labelsArray[i].includes("brasserie") || labelsArray[i].includes("Brasserie") 
 			
-			$('#nightDisplay').append(l); /*Adds buttons to HTML*/ 
 
-		}else if(labelsArray[i].includes("outdoors") || labelsArray[i].includes("mountains")||labelsArray[i].includes("hiking")|| labelsArray[i].includes("rivers")
-		||labelsArray[i].includes("Pools")||labelsArray[i].includes("Pools")||labelsArray[i].includes("Parks")){
+
+			){
 			
-			//console.log("it's an Activity");
+				$('#restaurantDisplay').append(l); /*Adds buttons to HTML*/
+
+		}else if( 
+				            
+
+			labelsArray[i].includes("club") || labelsArray[i].includes("Club") || labelsArray[i].includes("live") || labelsArray[i].includes("Live") || labelsArray[i].includes("Festival") || 
+				labelsArray[i].includes("festival") || labelsArray[i].includes("Cocktail") || labelsArray[i].includes("pub") || labelsArray[i].includes("Pub") || labelsArray[i].includes("cocktail")
+				|| labelsArray[i].includes("downtown") || labelsArray[i].includes("Downtown") || labelsArray[i].includes("nightSpot") || labelsArray[i].includes("NightSpot") || labelsArray[i].includes("Uptown") || labelsArray[i].includes("uptown")
+
+
 			
-			$('#activitiesDisplay').append(l); /*Adds buttons to HTML*/
+			){
+
+			
+				$('#nightDisplay').append(l); 
+
+		}else if(
+
+			labelsArray[i].includes("outdoors") || labelsArray[i].includes("Outdoors") || labelsArray[i].includes("Mountain") || labelsArray[i].includes("mountain")||labelsArray[i].includes("Hiking")|| labelsArray[i].includes("hiking") || 
+			labelsArray[i].includes("River") || labelsArray[i].includes("river") ||labelsArray[i].includes("pool")||labelsArray[i].includes("Pool")||labelsArray[i].includes("Park") ||labelsArray[i].includes("park") ||labelsArray[i].includes("skiing") ||labelsArray[i].includes("Skiing")
+			||labelsArray[i].includes("backpacking") ||labelsArray[i].includes("Backpacking") ||labelsArray[i].includes("Snowboarding") ||labelsArray[i].includes("snowboarding")
+
+
+			){
+			
+				
+				$('#activitiesDisplay').append(l); 
 		
 		}else{
 
-			$('#labelsDisplay').append(l); /*Adds buttons to HTML*/
+				$('#labelsDisplay').append(l); 
 
 		}
 
