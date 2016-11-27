@@ -323,11 +323,10 @@ function loadInitData() {
 	}
 
 	// Load the DOM
-	console.log(user.contacts);
     renderContacts(user.contacts);
     renderLabels();
     contactList = user.contacts;
-    listActivities();
+    listActivities(user.contacts);
 
 }
 
@@ -409,7 +408,7 @@ function loadInitData() {
 	for (var i = 0; i < labelsArray.length; i++){
 
 		
-		var l = $('<button type="button" class="btn btn primary btm-sm">')
+		var l = $('<button type="button" class="btn btn-default">')
 
 		l.addClass('label'); //Added class
 		l.attr('data-name', labelsArray[i]); //added data-attribute
@@ -455,7 +454,7 @@ function loadInitData() {
 
 	$('#contactsDisplay').empty();	
 
-	$('#contactsDisplay').append("<p>Select a contact to add or remove tags:</p>")
+	$('#contactsDisplay').append("<p><strong>Select a contact to add or remove tags:</strong></p>")
 
 
 	for(var i=0; i < contactsArray.length; i++){
@@ -464,19 +463,14 @@ function loadInitData() {
 		
 
 		//check whether there are tags on the contact already, if so, render them
-		if (contactsArray.tags){
-			c.text(contact.name + " " + contact.address + " "+ contact.tags.toString());
-		}
-		else{
-			c.text(contact.name + " " + contact.address + " ");
-		}
+
+			c.text(contact.name);
 		
 		c.attr('data-name', i);    
 		c.append('</div>');
 
 		console.log(c);
 		$('#contactsDisplay').append(c);
-
 
 
 	};
@@ -500,9 +494,9 @@ function listActivities(){
 	$("#activities").empty();
 	for (var i = 0; i < contactList.length; i++){
 		if(contactList[i].tags.length > 0){
-			$("#activities").append("<h4>"+contactList[i].name+"</h4>");
+			$("#activities").append("<h4>...with "+contactList[i].name+" (near "+contactList[i].address+")</h4>");
 			for (var j = 0; j < contactList[i].tags.length; j++){
-			$("#activities").append("<button class='activity' id='"+contactList[i].name+"|"+contactList[i].tags[j]+"'>"+contactList[i].tags[j]+" with "+contactList[i].name+"</button>");
+			$("#activities").append("<a href='#map'><button  class='activity' id='"+contactList[i].name+"|"+contactList[i].tags[j]+"'>"+contactList[i].tags[j]+" with "+contactList[i].name+"</button></a>");
 			}
 			$("#activities").append("<br>");
 		}

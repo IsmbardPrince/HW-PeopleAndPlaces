@@ -25,13 +25,14 @@ html, body{
 }
 
 .container{
-    height: 100%;
-    width: 100%;
+    height:100%;
+    width:90%;
 }
 
 #mapHolder{
+    height:75%;
     width:77%;
-    margin:0px;
+    margin-bottom:10px;
     float:left;
 }
 
@@ -54,4 +55,40 @@ html, body{
     float:right;
     margin-top: 20px;
     margin-right: 10px;
+}
+
+#selectLabels{
+    margin:10px;
+}
+
+#tagInstructions{
+    margin:10px;
+}
+
+#labelsDiv{
+    border-bottom:1px solid #008cba;
+}
+
+#backToTop{
+    clear:both;
+}
+
+.label{
+    color:black;
+}
+
+.hidden{
+    display:none;
+}
+
+.hiddenArea{
+    display:none;
+}
+
+a > button{
+    color:black;
+}
+
+h3{
+    margin-top:0px;
 }

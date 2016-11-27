@@ -11,6 +11,7 @@ $(document).ready(function(){
 	// And finally we load the initial data into the DOM here
 	loadInitData();
 
+
 })
 
 
@@ -49,7 +50,7 @@ $("#addLabelButton").on("click", function(){
 //$("#deleteLabelButton").on("click", deleteLabel);
 
 
-//This on click event resets all of the label displays 
+/*//This on click event resets all of the label displays 
 
 $('#resetLabelsButton').on('click', function(){
 
@@ -61,7 +62,7 @@ $('#resetLabelsButton').on('click', function(){
 	$('#nightDisplay').empty();
 
 
-});
+});*/
 
 
 
@@ -71,7 +72,6 @@ $(document.body).on("click",".contactDiv",function(){
 	$(".contactDiv").css("background-color","white");
 	$(".contactDiv").css("border","none");
 	$(this).css("background-color",'#DDD');
-	$(this).css("border",'2px solid gray');
 	$(".tagSelected").removeClass("tagSelected");
 	console.log(contactList);
 	currentContact = contactList[$(this).attr("id").split("-")[1]];
@@ -80,13 +80,19 @@ $(document.body).on("click",".contactDiv",function(){
 	//clear out the space for tags before adding new one 
 	$(".currentContactTags").remove();
 	$("#labelsDiv").remove();
-	$("#selectLabels").before("<div class='panel-body' id='labelsDiv'><h4 class='currentContactTags'>No tags for this contact yet.</h4></div>");
+	$("#tagInstructions").before("<div class='panel-body' id='labelsDiv'><h4 class='currentContactTags'>No tags for this contact yet.</h4></div>");
 	$("#saveTags").remove();
 	$(".currentContactTags").after("<button id='saveTags'>Save Tags</button>");
+	$("p.hidden.instructions").removeClass("hidden");
 	if(currentContact.tags.length > 0){
 		$(".currentContactTags").empty();
 		for (var i = 0; i < currentContact.tags.length; i++){
-			$(".currentContactTags").append(currentContact.tags[i]+"  ");
+			if (i != currentContact.tags.length-1){
+				$(".currentContactTags").append(currentContact.tags[i]+",  ");
+			} else{
+				$(".currentContactTags").append(currentContact.tags[i]);
+			}
+			
 		}
 		highlightTags();
 	} 
@@ -106,7 +112,11 @@ $(document.body).on("click","#selectLabels .label",function(){
 			}
 			$(".currentContactTags").empty();
 			for (var i = 0; i < currentContact.tags.length; i++){
-				$(".currentContactTags").append(currentContact.tags[i]+"  ");
+				if (i != currentContact.tags.length-1){
+					$(".currentContactTags").append(currentContact.tags[i]+",  ");
+				} else{
+					$(".currentContactTags").append(currentContact.tags[i]);
+				}
 			}
 			highlightTags();
 			listActivities();
@@ -116,8 +126,11 @@ $(document.body).on("click","#selectLabels .label",function(){
 			$(".currentContactTags").empty();
 
 			for (var i = 0; i < currentContact.tags.length; i++){
-
-				$(".currentContactTags").append(currentContact.tags[i]+"  ");
+				if (i != currentContact.tags.length-1){
+					$(".currentContactTags").append(currentContact.tags[i]+",  ");
+				} else{
+					$(".currentContactTags").append(currentContact.tags[i]);
+				}
 			}
 			highlightTags();
 			listActivities();
@@ -131,7 +144,6 @@ $(document.body).on("click","#selectLabels .label",function(){
 $(document).on('click',".activity",function(){
 		var name = this.id.slice(0,this.id.indexOf("|"));
 		var tagToSearch = this.id.slice(this.id.indexOf("|")+1);
-		$("#mapHolder").css("height","75%");
 		console.log(name);
 		console.log(tagToSearch);
 		var areaToSearch;
@@ -141,8 +153,12 @@ $(document).on('click',".activity",function(){
 			}
 		}
 		console.log(areaToSearch)
+		$("p.hidden").removeClass('hidden');
 		//calling the create map function in the api.js file
 		initMap(tagToSearch, areaToSearch);
+
+		var link = $("#backToTop").detach();
+		$("#weather").after(link);
 	})
 
 //save tags - send to firebase
@@ -153,7 +169,16 @@ $(document.body).on("click","#saveTags", function(){
 ///////////////////////////////////////////////////////////
 
 
+$("#doStuffLink").on("click",function(){
 
+	listActivities();
+	$(".hiddenArea").removeClass("hiddenArea");
+	$("html, body").animate({ scrollTop: $('#doStuff').offset().top }, 1500);
+})
+
+$("#backToTop").on("click",function(){
+	$("html, body").animate({ scrollTop: 0 }, 1000);
+})
 
 
 

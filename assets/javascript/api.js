@@ -345,15 +345,24 @@ function initMap(tagToSearch,area) {
 
 function weatherSearch(lat, lon){
     $("#weather").empty();
-    //get the forecast for the next 9-12 hours
-    var url = "http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";
+    //current weather
+    var url = "http://api.openweathermap.org/data/2.5/weather?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";
     $.get(url,function(response){
         console.log(response);
-        $("#weather").append("<h3>Forecast for "+response.city.name+":");
-        $("#weather").append("<p><strong>"+moment.utc(response.list[0].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[0].main.temp+"F - "+ response.list[0].weather[0].description);
-        $("#weather").append("<p><strong>"+moment.utc(response.list[1].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[1].main.temp+"F - "+ response.list[1].weather[0].description);
-        $("#weather").append("<p><strong>"+moment.utc(response.list[2].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[2].main.temp+"F - "+ response.list[2].weather[0].description);
-        $("#weather").append("<p><strong>"+moment.utc(response.list[3].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ response.list[3].main.temp+"F - "+ response.list[3].weather[0].description);
+        $("#weather").append("<h3>Forecast for "+response.name+":");
+        $("#weather").append("<p><strong>"+moment().format("MMMM Do, h:mmA") + "(right now)</strong> - Temp: "+ Math.floor(response.main.temp)+"F - "+ response.weather[0].description);
+    }).done(function(){
+        //get the forecast for the next 9-12 hours
+        url = "http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";
+        $.get(url,function(response){
+        console.log(response);
+        
+        $("#weather").append("<p><strong>"+moment.utc(response.list[0].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ Math.floor(response.list[0].main.temp)+"F - "+ response.list[0].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[1].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ Math.floor(response.list[1].main.temp)+"F - "+ response.list[1].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[2].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ Math.floor(response.list[2].main.temp)+"F - "+ response.list[2].weather[0].description);
+        $("#weather").append("<p><strong>"+moment.utc(response.list[3].dt_txt).local().format("MMMM Do, hA") + "</strong> - Temp: "+ Math.floor(response.list[3].main.temp)+"F - "+ response.list[3].weather[0].description);
 
     })
+    })
+    
 }
