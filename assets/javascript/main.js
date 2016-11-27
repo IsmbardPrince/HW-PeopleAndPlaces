@@ -354,6 +354,7 @@ function loadInitData() {
 		$('#activitiesDisplay').empty();
 		$('#nightDisplay').empty();	
 	
+	console.log(user.userTags);
 	//Loops through array of labels
 	for (var i = 0; i < labelsArray.length; i++){
 

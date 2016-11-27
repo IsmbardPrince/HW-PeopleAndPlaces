@@ -76,6 +76,8 @@ $(document.body).on("click",".contactDiv",function(){
 	$(".contactDiv").css("border","none");
 	$(this).css("background-color",'#DDD');
 	$(".tagSelected").removeClass("tagSelected");
+	labelsArray = user.userTags;
+	renderLabels();
 	console.log(contactList);
 	currentContact = contactList[$(this).attr("id").split("-")[1]];
 	$("#contactNametoEdit").text(" for "+ currentContact.name);
