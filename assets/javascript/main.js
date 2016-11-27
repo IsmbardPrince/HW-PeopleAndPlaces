@@ -36,6 +36,7 @@ function pnpUser(userName) {
 	this.email = ""; // the email address of the signed-in google account currently accessing the app
 	this.address = ""; // the street address of the signed-in google account currently accessing the app
 	this.contacts = []; // array of the user's contact objects
+	this.userTags = []; // array of tag types which are defined for the current user
 	this.userReady = false; // indicates whether the user's profile data has been loaded and is ready for use
 	this.contactsReady = false; // indicates whether the user's contact data has been loaded and is ready for use
 	this.ready = (this.userReady && this.contactsReady); // indicates whether the object has data loaded and is ready for use
@@ -44,7 +45,17 @@ function pnpUser(userName) {
 	var self = this; // convenience variable for private functions
 
 	// Public methods of the object
-	// None at this time
+
+    // pnpUser.saveTags(newTagArray)
+    // This method writes the supplied tags array to the contact record for the specified
+    // Contact and owner. The newly written tags will completely erase any tags for that
+    // contact and owner which previously existed.
+    this.saveTags = function(newTagArray) {
+
+		// Set this owner's IDsto write the tag list to the appropriate user record
+		tagsDB.saveTags(self.resID, newTagArray);
+    	
+    }
 
 }
 
@@ -100,6 +111,7 @@ function pnpTags() {
 	// Object globals
     var database; // contains the Firebase access global
     var refContacts; // contains the Firebase reference to the Contact records
+    var refUsers; // contains the Firebase reference to the User records
 
     // pnpTags.addTags(contact, owner, tags)
     // This method writes the supplied tags array to the contact record for the specified
@@ -110,6 +122,19 @@ function pnpTags() {
     	// write the tags into the Firebase ID for the specified contact
 		refContacts.child(getKeyFromId(contact)).set({
 			owner: owner,
+			tags: tags
+		});
+    	
+    }
+
+    // pnpTags.saveTags(owner, tags)
+    // This method writes the supplied tags array to the user record for the specified
+    // owner. The newly written tags will completely erase any tags for that user
+    // which previously existed.
+    this.saveTags = function(owner, tags) {
+
+    	// write the tags into the Firebase ID for the specified contact
+		refUsers.child(getKeyFromId(owner)).set({
 			tags: tags
 		});
     	
@@ -199,6 +224,8 @@ function pnpTags() {
 	    database = firebase.database();
 	    // and a reference to the contact records in our database
 	    refContacts = database.ref("contacts");
+	    // and a reference to the contact records in our database
+	    refUsers = database.ref("users");
 
 	    // Make the initial load of tags for this user's contacts
 		loadContactTags();
