@@ -28,6 +28,9 @@ $("#addLabelButton").on("click", function(){
 	//Pushes the variable into an array
 	labelsArray.push(label);
 
+	//save the array into firebase
+	user.saveTags(labelsArray);
+
 	//Console logs the array for development purposes
 	console.log(labelsArray);
 	
