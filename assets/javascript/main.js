@@ -20,7 +20,7 @@ var contactSelected = false;
 //global to hold the current contact, if one has been selected
 var currentContact;
 
-var gapiScriptLoaded = false; // flag to manage the google api's asynchronous load
+//var gapiScriptLoaded = false; // flag to manage the google api's asynchronous load
 
 // pnpUser(userName)
 // This is the constructor for the main user object of the app. It surfaces the user and contact data
@@ -247,14 +247,6 @@ function pnpTags() {
 
 }
 
-// handleGapiScriptLoad()
-// Callback handler for when the Google API javascript library has completed loading
-function handleGapiScriptLoad() {
-
-	gapiScriptLoaded = true;
-
-}
-
 // loadInitData()
 // This function exists to ensure that all of our initial API calls and DB loads are complete before
 // we actually load the DOM. While this will probably not be a problem in most cases, the timer here insures
@@ -271,6 +263,8 @@ function loadInitData() {
 			return;
 		} 
 	}
+
+	console.log("in loadInitData");
 
 	// Load the DOM
     renderContacts(user.contacts);
