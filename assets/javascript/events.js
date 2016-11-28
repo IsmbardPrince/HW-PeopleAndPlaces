@@ -43,42 +43,23 @@ $("#addLabelButton").on("click", function(){
 
 });
 
-//This on click event calls the editContact function
-
-//$(".editButton").on("click", editContact);
-
-//This on click event calls the deleteLabelButton function
-
-
-//$("#deleteLabelButton").on("click", deleteLabel);
-
-
-/*//This on click event resets all of the label displays 
-
-$('#resetLabelsButton').on('click', function(){
-
-
-
-	$('#labelsDisplay').empty();	
-	$('#restaurantDisplay').empty();
-	$('#activitiesDisplay').empty();
-	$('#nightDisplay').empty();
-
-
-});*/
-
 
 
 // selecting a contact to edit tags
 
 $(document.body).on("click",".contactDiv",function(){
+	//make sure colors are reset
 	$(".contactDiv").css("background-color","white");
 	$(".contactDiv").css("border","none");
+	//change for selection
 	$(this).css("background-color",'#DDD');
 	$(".tagSelected").removeClass("tagSelected");
-	labelsArray = user.userTags;
-	renderLabels();
-	console.log(contactList);
+	//reset the labels array with the user's own tags
+	if(user.userTags.length>0){
+		labelsArray = user.userTags;
+		renderLabels();
+	}
+	//save the current contact
 	currentContact = contactList[$(this).attr("id").split("-")[1]];
 	$("#contactNametoEdit").text(" for "+ currentContact.name);
 	contactSelected = true;
@@ -86,9 +67,11 @@ $(document.body).on("click",".contactDiv",function(){
 	$(".currentContactTags").remove();
 	$("#labelsDiv").remove();
 	$("#tagInstructions").before("<div class='panel-body' id='labelsDiv'><h4 class='currentContactTags'>No tags for this contact yet.</h4></div>");
+	//add the save tags button
 	$("#saveTags").remove();
 	$(".currentContactTags").after("<button id='saveTags'>Save Tags</button>");
 	$("p.hidden.instructions").removeClass("hidden");
+	//show the tags if they exist
 	if(currentContact.tags.length > 0){
 		$(".currentContactTags").empty();
 		for (var i = 0; i < currentContact.tags.length; i++){
@@ -99,6 +82,7 @@ $(document.body).on("click",".contactDiv",function(){
 			}
 			
 		}
+		//highlight any active tags
 		highlightTags();
 	} 
 
@@ -173,13 +157,14 @@ $(document.body).on("click","#saveTags", function(){
 
 ///////////////////////////////////////////////////////////
 
-
+//show activities when doStuff is clicked
 $("#doStuffLink").on("click",function(){
-
 	listActivities();
 	$(".hiddenArea").removeClass("hiddenArea");
 	$("html, body").animate({ scrollTop: $('#doStuff').offset().top }, 1500);
 })
+
+//back to top link
 
 $("#backToTop").on("click",function(){
 	$("html, body").animate({ scrollTop: 0 }, 1000);

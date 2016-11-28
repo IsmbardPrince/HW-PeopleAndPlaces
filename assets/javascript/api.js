@@ -339,7 +339,7 @@ function weatherSearch(lat, lon){
     $.get(url,function(response){
         console.log(response);
         $("#weather").append("<h3>Forecast for "+response.name+":");
-        $("#weather").append("<p><strong>"+moment().format("MMMM Do, h:mmA") + "(right now)</strong> - Temp: "+ Math.floor(response.main.temp)+"F - "+ response.weather[0].description);
+        $("#weather").append("<p><strong>"+moment().format("MMMM Do, h:mmA") + " (right now)</strong> - Temp: "+ Math.floor(response.main.temp)+"F - "+ response.weather[0].description);
     }).done(function(){
         //get the forecast for the next 9-12 hours
         url = "http://api.openweathermap.org/data/2.5/forecast?lat="+lat+"&lon="+lon+"&appid=d0a3db1de0d63133f4fdc53d430aabea&units=imperial";

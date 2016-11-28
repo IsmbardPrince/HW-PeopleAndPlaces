@@ -1,5 +1,5 @@
 .contactDiv:hover{
-    background-color: #DDD;
+    background-color: #9BF !important;
     cursor:pointer;
 }
 
@@ -41,9 +41,10 @@ html, body{
 }
 
 #weather{
-    float:right;
+    float:left;
     width:20%;
     margin-right:15px;
+    margin-left:15px;
 }
 
 .currentContactTags{
@@ -91,4 +92,9 @@ a > button{
 
 h3{
     margin-top:0px;
+}
+
+.jumbotron{
+    background-color:#008cba;
+    color:white;
 }
