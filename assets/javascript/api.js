@@ -77,8 +77,8 @@ function pnpPeople() {
 		}).then(function () {
 			console.log("right before authentication")
 			// Get the current user's google sign-in state and listen for changes to it
-			gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
-			console.log("here we've set up the authentication listener")
+//			gapi.auth2.getAuthInstance().isSignedIn.listen(updateSigninStatus);
+//			console.log("here we've set up the authentication listener")
 			// Handle the initial sign-in state and make sure the user is signed in
 			updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
 			console.log("and now we've returned from the initial sign-in check")
@@ -217,14 +217,14 @@ function pnpPeople() {
 	// 		isSignedIn - indicates the app user's current Google signed-in status
 	function updateSigninStatus(isSignedIn) {
 		// Sign in the user if they are not currently signed in
-		if (!isSignedIn) {
+//		if (!isSignedIn) {
 			console.log("this is where we should ask the user to sign-in")
 			gapi.auth2.getAuthInstance().signIn().then(function () {
 				// Mark that we are cocked and loaded and can use the api now
 				self.apiAvailable = true;
 				console.log("and here they should have signed in")
 			});
-		}
+//		}
 	}
 
 	// init()
