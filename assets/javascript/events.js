@@ -1,20 +1,15 @@
 // Start the app up when everything is loaded
 $(document).ready(function(){
 
-	console.log("in document.ready");
 	// Create the main app object
 	user =  new pnpUser();
-	console.log("after new pnpuser()");
 
 	// And the service objects
 	people = new pnpPeople(); // service object for the Google People API
-	console.log("after new pnpPeople()");
 	tagsDB = new pnpTags(); // service object for Firebase db holding the contact tags
-	console.log("after new pnpTags()");
 
 	// And finally we load the initial data into the DOM here
 	loadInitData();
-	console.log("after loadInitData");
 
 })
 
