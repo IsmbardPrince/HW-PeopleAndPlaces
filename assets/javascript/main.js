@@ -264,6 +264,8 @@ function loadInitData() {
 		} 
 	}
 
+	console.log("in loadInitData");
+
 	// Load the DOM
     renderContacts(user.contacts);
     renderLabels();
